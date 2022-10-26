@@ -1,6 +1,8 @@
+from re import S
+from select import select
 import pygame
 
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS
+from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, ICON
 from dino_runner.components.dinossaur import Dinossaur
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 
@@ -20,6 +22,7 @@ class Game:
         self.x_pos_bg = 0
         self.y_pos_bg = 380
         self.score = 0
+        self.death_count = 0
 
     def run(self):
         # Game loop: events - update - draw
@@ -33,11 +36,14 @@ class Game:
     def execute(self):
         self.executing = True
 
-        while(self.executing):   
-            self.display_menu()
+        while(self.executing):
 
-            if not self.playing:
-                self.reset()
+            if not self.playing and self.death_count == 0:
+                self.display_menu()
+
+            if not self.playing and self.death_count > 0:
+                self.death_menu()
+                
             
         pygame.display.quit()
         pygame.quit()
@@ -52,15 +58,59 @@ class Game:
         font = pygame.font.Font(FONT, font_size)
         text = font.render(f'Press any key to start', True, color)
 
-        score_text_rect = text.get_rect()
-        score_text_rect.x = 380
-        score_text_rect.y = 280
+        menu_text_rect = text.get_rect()
+        menu_text_rect.x = 380
+        menu_text_rect.y = 280
 
-        self.screen.blit(text, (score_text_rect.x, score_text_rect.y))
+        self.screen.blit(text, (menu_text_rect.x, menu_text_rect.y))
 
         pygame.display.update()
 
         self.events_on_menu()
+
+    def death_menu(self):
+        self.screen.fill((0,0,0))
+        
+        font_size = 28
+        color = (255,255,255)
+        FONT = 'freesansbold.ttf'
+
+        font = pygame.font.Font(FONT, font_size)
+        text = font.render(f'Press any key to try again', True, color)
+
+        death_text_rect = text.get_rect()
+        death_text_rect.x = 350
+        death_text_rect.y = 280
+
+        self.screen.blit(text, (death_text_rect.x, death_text_rect.y))
+
+        ##Texto para mostrar a pontuação
+        score2_text = font.render(f'Score: {self.score}', True, color)
+        score2_text_rect = text.get_rect()
+        score2_text_rect.x = 475
+        score2_text_rect.y = 320
+
+
+        self.screen.blit(score2_text, (score2_text_rect.x, score2_text_rect.y))
+        ##Texto para mostrar as mortes
+        death_count = font.render(f'Deaths: {self.death_count}', True, color)
+        death_count_rect = text.get_rect()
+        death_count_rect.x = 475
+        death_count_rect.y = 360
+
+
+        self.screen.blit(death_count, (death_count_rect.x, death_count_rect.y))
+
+        icon = ICON
+        icon_rect = text.get_rect()
+        icon_rect.x = 495
+        icon_rect.y = 175
+        
+        self.screen.blit(icon, (icon_rect.x, icon_rect.y))
+
+        pygame.display.update()
+        self.events_on_menu()
+        
 
     def events_on_menu(self):
         for event in pygame.event.get():
@@ -68,6 +118,7 @@ class Game:
                 self.playing = False
                 self.executing = False
             if event.type == pygame.KEYDOWN:
+                self.reset()
                 self.run()
 
     def events(self):
@@ -111,7 +162,6 @@ class Game:
         
 
     def draw_score(self):
-        print(self.score)
         font_size = 28
         color = (0,0,0)
         FONT = 'freesansbold.ttf'
