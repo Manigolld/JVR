@@ -2,7 +2,7 @@ from re import S
 from select import select
 import pygame
 
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, ICON
+from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DINO_DEAD
 from dino_runner.components.dinossaur import Dinossaur
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 
@@ -103,7 +103,7 @@ class Game:
         self.screen.blit(death_count, (death_count_rect.x, death_count_rect.y))
         
         ##Mostra o icone do dinossauro
-        dino_dead_icon = ICON
+        dino_dead_icon = DINO_DEAD
         dino_dead_icon_rect = text.get_rect()
         dino_dead_icon_rect.x = 495
         dino_dead_icon_rect.y = 175
