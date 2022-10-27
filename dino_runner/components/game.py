@@ -92,6 +92,7 @@ class Game:
 
 
         self.screen.blit(score2_text, (score2_text_rect.x, score2_text_rect.y))
+        
         ##Texto para mostrar as mortes
         death_count = font.render(f'Deaths: {self.death_count}', True, color)
         death_count_rect = text.get_rect()
@@ -100,13 +101,14 @@ class Game:
 
 
         self.screen.blit(death_count, (death_count_rect.x, death_count_rect.y))
-
-        icon = ICON
-        icon_rect = text.get_rect()
-        icon_rect.x = 495
-        icon_rect.y = 175
         
-        self.screen.blit(icon, (icon_rect.x, icon_rect.y))
+        ##Mostra o icone do dinossauro
+        dino_dead_icon = ICON
+        dino_dead_icon_rect = text.get_rect()
+        dino_dead_icon_rect.x = 495
+        dino_dead_icon_rect.y = 175
+        
+        self.screen.blit(dino_dead_icon, (dino_dead_icon_rect.x, dino_dead_icon_rect.y))
 
         pygame.display.update()
         self.events_on_menu()
