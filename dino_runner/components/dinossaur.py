@@ -1,7 +1,8 @@
 
+from turtle import Screen
 import pygame
 from pygame.sprite import Sprite
-from dino_runner.utils.constants import RUNNING, JUMPING, DUCKING
+from dino_runner.utils.constants import RUNNING, JUMPING, DUCKING, DUCKING_SHIELD, JUMPING_SHIELD, RUNNING_SHIELD
 
 X_POS =80
 Y_POS = 310
@@ -21,25 +22,42 @@ class Dinossaur:
         self.dino_jump = False
 
         self.jump_vel = JUMP_VEL
-
         self.dino_duck = False
 
+        self.setup_state()
 
+    def setup_state(self):
+        self.has_shield = False
+        self.has_power_up = False
+        self.power_up_time = 0
 
     def run(self):
-        
-        self.dino_rect.y = Y_POS       
-        if self.step_index < 5:
-            self.image = RUNNING [0]
-        else:
-            self.image = RUNNING[1]
+        self.dino_rect.y = Y_POS    
+        if self.has_shield == False:
+       
+            if self.step_index < 5:
+                self.image = RUNNING [0]
+            else:
+                self.image = RUNNING[1]
+
+        else: 
+            if self.step_index < 5:
+                self.image = RUNNING_SHIELD[0]
+            else:
+                self.image = RUNNING_SHIELD[1]
 
         self.step_index+=1
         
 
 
     def update(self, user_input):
-        
+        if(self.power_up_time > 0):
+            self.power_up_time -= 1000
+            self.has_shield = True
+
+        else:
+            self.has_shield = False
+            self.has_power_up = False
         
         if self.dino_duck:
             self.duck()
@@ -66,8 +84,10 @@ class Dinossaur:
         
     
     def jump(self):
-        self.image = JUMPING
-
+        if self.has_shield == False:
+            self.image = JUMPING
+        else:
+            self.image = JUMPING_SHIELD
         if self.dino_jump:
             self.dino_rect.y -= self.jump_vel * 4
             self.jump_vel -= 0.8
@@ -78,12 +98,18 @@ class Dinossaur:
             self.jump_vel = JUMP_VEL
 
     def duck(self):
-
-        self.image = DUCKING
-        if self.step_index < 5:
-            self.image = DUCKING[0]
+        if self.has_shield == False:
+            self.image = DUCKING
+            if self.step_index < 5:
+                self.image = DUCKING[0]
+            else:
+                self.image = DUCKING[1]
         else:
-            self.image = DUCKING[1]
+            self.image = DUCKING_SHIELD
+            if self.step_index < 5:
+                self.image = DUCKING_SHIELD[0]
+            else:
+                self.image = DUCKING_SHIELD[1]
 
         self.step_index+=1        
         self.dino_rect.y = DUCK_Y_POS

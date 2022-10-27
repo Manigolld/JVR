@@ -24,11 +24,14 @@ class ObstacleManager:
 
             #manage the colision
             if game.player.dino_rect.colliderect(obstacle.rect):
-                game.playing = False
-                pygame.time.delay(500)
-                game.death_count += 1
-                print(game.death_count)
-                break
+                if not game.player.has_shield:
+                    game.playing = False
+                    pygame.time.delay(500)
+                    game.death_count += 1
+                    print(game.death_count)
+                    break
+                else:
+                    self.obstacles.remove(obstacle)
 
 
     def draw(self, screen):

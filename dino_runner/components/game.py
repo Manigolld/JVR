@@ -5,7 +5,7 @@ import pygame
 from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DINO_DEAD
 from dino_runner.components.dinossaur import Dinossaur
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
-
+from dino_runner.components.power_ups.power_up_manager import PowerUpManager
 
 class Game:
     def __init__(self):
@@ -15,6 +15,7 @@ class Game:
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.player = Dinossaur()
         self.obstacle_manager = ObstacleManager()
+        self.power_up_manager = PowerUpManager()
         self.clock = pygame.time.Clock()
         self.playing = False
         self.executing = False
@@ -132,6 +133,7 @@ class Game:
         user_input = pygame.key.get_pressed()
         self.player.update(user_input)
         self.obstacle_manager.update(self)
+        self.power_up_manager.update(self)
         
         self.update_score()
         self.update_game_speed()
@@ -148,6 +150,8 @@ class Game:
         self.score = 0
         self.game_speed = 20
         self.obstacle_manager.reset_obstacles()
+        self.player.has_shield = False
+        self.power_up_manager.reset_power_ups()
 
     def draw(self):
         self.clock.tick(FPS)
@@ -156,7 +160,7 @@ class Game:
 
         self.player.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
-        
+        self.power_up_manager.draw(self.screen)
         self.draw_score()
         pygame.display.update()
         pygame.display.flip()
@@ -172,7 +176,7 @@ class Game:
         text = font.render(f'Score: {self.score}', True, color)
 
         score_text_rect = text.get_rect()
-        score_text_rect.x = 950
+        score_text_rect.x = 900
         score_text_rect.y = 10
 
         self.screen.blit(text, (score_text_rect.x, score_text_rect.y))
