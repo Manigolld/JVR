@@ -2,7 +2,7 @@ from re import S
 from select import select
 import pygame
 
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DINO_DEAD
+from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DINO_DEAD, DEFAULT_TYPE
 from dino_runner.components.dinossaur import Dinossaur
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 from dino_runner.components.power_ups.power_up_manager import PowerUpManager
@@ -150,9 +150,9 @@ class Game:
         self.score = 0
         self.game_speed = 20
         self.obstacle_manager.reset_obstacles()
-        self.player.has_shield = False
         self.power_up_manager.reset_power_ups()
-
+        self.player.has_power_up = False
+        
     def draw(self):
         self.clock.tick(FPS)
         self.screen.fill((255, 255, 255))
@@ -162,10 +162,27 @@ class Game:
         self.obstacle_manager.draw(self.screen)
         self.power_up_manager.draw(self.screen)
         self.draw_score()
+        self.draw_power_up_time()
         pygame.display.update()
         pygame.display.flip()
     
-        
+    def draw_power_up_time(self):         
+        if (self.player.has_power_up):             
+            time_to_show = round((self.player.power_up_time - pygame.time.get_ticks()) / 1000, 2)             
+            if time_to_show >= 0:                  
+                font_size = 22                 
+                color = (0,0,0)                 
+                FONT = 'freesansbold.ttf'                 
+                font = pygame.font.Font(FONT, font_size)                          
+                text_to_display = f"Power up time: {time_to_show}"                                 
+                text = font.render(text_to_display,True, color)                 
+                text_rect = text.get_rect()                          
+                text_rect.x = 400             
+                text_rect.y = 15               
+                self.screen.blit(text, (text_rect.x, text_rect.y))                                             
+            else:                 
+                self.player.has_power_up = False             
+                self.player.type = DEFAULT_TYPE   
 
     def draw_score(self):
         font_size = 28

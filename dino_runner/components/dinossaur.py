@@ -2,16 +2,21 @@
 from turtle import Screen
 import pygame
 from pygame.sprite import Sprite
-from dino_runner.utils.constants import RUNNING, JUMPING, DUCKING, DUCKING_SHIELD, JUMPING_SHIELD, RUNNING_SHIELD
+from dino_runner.utils.constants import RUNNING, JUMPING, DUCKING, DUCKING_SHIELD, JUMPING_SHIELD, RUNNING_SHIELD, DEFAULT_TYPE, SHIELD_TYPE, HAMMER_TYPE, DUCKING_HAMMER, JUMPING_HAMMER, RUNNING_HAMMER
 
-X_POS =80
+DUCK_IMG = { DEFAULT_TYPE : DUCKING, SHIELD_TYPE : DUCKING_SHIELD, HAMMER_TYPE : DUCKING_HAMMER} 
+JUMP_IMG = { DEFAULT_TYPE : JUMPING, SHIELD_TYPE : JUMPING_SHIELD, HAMMER_TYPE : JUMPING_HAMMER} 
+RUN_IMG = { DEFAULT_TYPE : RUNNING, SHIELD_TYPE : RUNNING_SHIELD, HAMMER_TYPE : RUNNING_HAMMER}
+
+X_POS =90
 Y_POS = 310
 JUMP_VEL =  8.5
 DUCK_Y_POS = 340
 
 class Dinossaur:
     def __init__(self):
-        self.image =  RUNNING[0]
+        self.type = DEFAULT_TYPE
+        self.image =  RUN_IMG[self.type][0]
 
         self.dino_rect = self.image.get_rect()
         self.dino_rect.x =X_POS
@@ -23,41 +28,19 @@ class Dinossaur:
 
         self.jump_vel = JUMP_VEL
         self.dino_duck = False
+        
 
         self.setup_state()
 
     def setup_state(self):
         self.has_shield = False
+        self.has_hammer = False
         self.has_power_up = False
-        self.power_up_time = 0
-
-    def run(self):
-        self.dino_rect.y = Y_POS    
-        if self.has_shield == False:
-       
-            if self.step_index < 5:
-                self.image = RUNNING [0]
-            else:
-                self.image = RUNNING[1]
-
-        else: 
-            if self.step_index < 5:
-                self.image = RUNNING_SHIELD[0]
-            else:
-                self.image = RUNNING_SHIELD[1]
-
-        self.step_index+=1
         
 
-
+    
+        
     def update(self, user_input):
-        if(self.power_up_time > 0):
-            self.power_up_time -= 1000
-            self.has_shield = True
-
-        else:
-            self.has_shield = False
-            self.has_power_up = False
         
         if self.dino_duck:
             self.duck()
@@ -66,7 +49,6 @@ class Dinossaur:
         elif self.dino_jump:
             self.jump()
         
-
         if user_input[pygame.K_UP] and not self.dino_jump:
             self.dino_jump =True
             self.dino_run = False
@@ -81,13 +63,21 @@ class Dinossaur:
             
         if self.step_index >= 10:
             self.step_index = 0
-        
+    
+    def run(self):
+
+
+        self.image = RUN_IMG[self.type][self.step_index // 5]
+        self.dino_rect = self.image.get_rect()
+        self.dino_rect.y = Y_POS
+        self.dino_rect.x = X_POS 
+        self.step_index+=1
+
+
     
     def jump(self):
-        if self.has_shield == False:
-            self.image = JUMPING
-        else:
-            self.image = JUMPING_SHIELD
+        self.image = JUMP_IMG[self.type]
+
         if self.dino_jump:
             self.dino_rect.y -= self.jump_vel * 4
             self.jump_vel -= 0.8
@@ -98,19 +88,8 @@ class Dinossaur:
             self.jump_vel = JUMP_VEL
 
     def duck(self):
-        if self.has_shield == False:
-            self.image = DUCKING
-            if self.step_index < 5:
-                self.image = DUCKING[0]
-            else:
-                self.image = DUCKING[1]
-        else:
-            self.image = DUCKING_SHIELD
-            if self.step_index < 5:
-                self.image = DUCKING_SHIELD[0]
-            else:
-                self.image = DUCKING_SHIELD[1]
-
+        self.image = DUCK_IMG[self.type][self.step_index // 5]
+        self.dino_rect = self.image.get_rect()
         self.step_index+=1        
         self.dino_rect.y = DUCK_Y_POS
         self.dino_rect.x = X_POS

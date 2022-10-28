@@ -3,7 +3,7 @@ import pygame
 from dino_runner.components.obstacles.large_cactus import LargeCactus
 from dino_runner.components.obstacles.cactus import Cactus
 from dino_runner.components.obstacles.bird import Bird
-from dino_runner.utils.constants import SMALL_CACTUS, LARGE_CACTUS, BIRD
+from dino_runner.utils.constants import SMALL_CACTUS, LARGE_CACTUS, BIRD, HAMMER_TYPE
 
 class ObstacleManager:
     def __init__(self):
@@ -24,14 +24,14 @@ class ObstacleManager:
 
             #manage the colision
             if game.player.dino_rect.colliderect(obstacle.rect):
-                if not game.player.has_shield:
+                if not game.player.has_power_up:
                     game.playing = False
                     pygame.time.delay(500)
                     game.death_count += 1
-                    print(game.death_count)
                     break
                 else:
-                    self.obstacles.remove(obstacle)
+                    if game.player.type == HAMMER_TYPE:
+                        self.obstacles.remove(obstacle)
 
 
     def draw(self, screen):
