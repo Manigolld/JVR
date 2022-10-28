@@ -2,7 +2,7 @@ from re import S
 from select import select
 import pygame
 
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DINO_DEAD, DEFAULT_TYPE
+from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, RESET_ICON, DEFAULT_TYPE, CLOUD, DINO_DEAD
 from dino_runner.components.dinossaur import Dinossaur
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 from dino_runner.components.power_ups.power_up_manager import PowerUpManager
@@ -24,6 +24,8 @@ class Game:
         self.y_pos_bg = 380
         self.score = 0
         self.death_count = 0
+        self.x_pos_c = 1200
+        self.y_pos_c = 110
 
     def run(self):
         # Game loop: events - update - draw
@@ -103,14 +105,23 @@ class Game:
 
         self.screen.blit(death_count, (death_count_rect.x, death_count_rect.y))
         
+        ##Mostra o icone de reset
+        reset_icon = RESET_ICON
+        reset_icon_rect = text.get_rect()
+        reset_icon_rect.x = 495
+        reset_icon_rect.y = 420
+        
+        self.screen.blit(reset_icon, (reset_icon_rect.x, reset_icon_rect.y))
+        
         ##Mostra o icone do dinossauro
         dino_dead_icon = DINO_DEAD
         dino_dead_icon_rect = text.get_rect()
         dino_dead_icon_rect.x = 495
         dino_dead_icon_rect.y = 175
-        
+
         self.screen.blit(dino_dead_icon, (dino_dead_icon_rect.x, dino_dead_icon_rect.y))
 
+        
         pygame.display.update()
         self.events_on_menu()
         
@@ -161,11 +172,20 @@ class Game:
         self.player.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
         self.power_up_manager.draw(self.screen)
+        self.draw_cloud()
         self.draw_score()
         self.draw_power_up_time()
         pygame.display.update()
         pygame.display.flip()
     
+    def draw_cloud(self):         
+        cloud_width = CLOUD.get_width()         
+        self.screen.blit(CLOUD, (self.x_pos_c, self.y_pos_c))         
+        if self.x_pos_c <= -cloud_width:             
+            self.screen.blit(CLOUD, ( self.x_pos_c, self.y_pos_c))             
+            self.x_pos_c = 1100         
+        self.x_pos_c -= self.game_speed
+
     def draw_power_up_time(self):         
         if (self.player.has_power_up):             
             time_to_show = round((self.player.power_up_time - pygame.time.get_ticks()) / 1000, 2)             

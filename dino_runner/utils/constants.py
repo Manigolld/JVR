@@ -74,3 +74,4 @@ HEART = pygame.image.load(os.path.join(IMG_DIR, 'Other/SmallHeart.png'))
 DEFAULT_TYPE = "default"
 HAMMER_TYPE = "hammer"
 SHIELD_TYPE = "shield"
+RESET_ICON = pygame.image.load(os.path.join(IMG_DIR, 'Other/Reset.png'))
