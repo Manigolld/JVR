@@ -34,7 +34,7 @@ class Game:
             self.events()
             self.update()
             self.draw()
-        #pygame.quit()
+        
 
     def execute(self):
         self.executing = True
