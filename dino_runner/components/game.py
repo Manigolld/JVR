@@ -23,6 +23,7 @@ class Game:
         self.x_pos_bg = 0
         self.y_pos_bg = 380
         self.score = 0
+        self.high_score = 0
         self.death_count = 0
         self.x_pos_c = 1200
         self.y_pos_c = 110
@@ -90,11 +91,19 @@ class Game:
         ##Texto para mostrar a pontuação
         score2_text = font.render(f'Score: {self.score}', True, color)
         score2_text_rect = text.get_rect()
-        score2_text_rect.x = 475
+        score2_text_rect.x = 320
         score2_text_rect.y = 320
 
 
         self.screen.blit(score2_text, (score2_text_rect.x, score2_text_rect.y))
+
+        high_score_text = font.render(f'High Score: {self.high_score}', True, color)
+        high_score_text_rect = text.get_rect()
+        high_score_text_rect.x = 520
+        high_score_text_rect.y = 320
+
+
+        self.screen.blit(high_score_text, (high_score_text_rect.x, high_score_text_rect.y))
         
         ##Texto para mostrar as mortes
         death_count = font.render(f'Deaths: {self.death_count}', True, color)
@@ -147,7 +156,16 @@ class Game:
         self.power_up_manager.update(self)
         
         self.update_score()
+        self.update_high_score()
         self.update_game_speed()
+
+    def update_high_score(self):
+        if self.high_score == 0:
+            self.high_score = self.score
+        else:
+            if self.score > self.high_score:
+                self.high_score = self.score
+
 
     def update_score(self):
     
